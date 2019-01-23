@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">Welcome {User}</h1>   <!-- replace user with handlebars-->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center">You have {total} awards</h4>
+        </div>
+    </div>
+    <!-- VIEW button pop up of award/overlay?-->
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center">Your most recent award {aType}<button><a href="/{awardID}">VIEW</a></button></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center"><a href="/createAward:{userId}">Create Award</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center"><a href="/viewAwards:{userId}">View Your Awards</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center"><a href="/viewTraining:{userId}">View Your Training Certificates</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center"><a href="/manageAwards:{userId}">Manage Awards You've Given</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4 class="text-center"><a href="/editProfile:{userId}">Edit Profile</a></h4>
+        </div>
+    </div>
+</div>
+
