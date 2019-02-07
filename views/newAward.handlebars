@@ -1,0 +1,41 @@
+<div class="container">
+    <h2>Give an award</h2>
+    <form action="/userHome/newAward" method='post'>
+        <div class='form-row'>
+            <div class="form-group col-4">
+                <label for="fName">First Name</label>
+                <input type="text" class="form-control" id="fName" placeholder="First Name">
+            </div>
+
+            <div class="form-group col-4">
+                <label for="lName">Last Name</label>
+                <input type="text" class="form-control" id="lName" placeholder="Last Name">
+                
+            </div>
+        </div>
+        <div class='form-row'>
+            <div class='form-group col-6'>
+                <label for='emailTo'>Email of reciepient</label>
+                <input type='email' class='form-control' id='emailTo' placeholder="Email">
+            </div>
+        </div>
+        <div class='form-row'>
+            <div class='form-group col-6'>
+                <label for='aType'>Award Type</label>
+                <select class='form-control' id='aType'>
+                    <option selected>Choose</option>
+                    <option>Employee of the Month</option>
+                    <option>Outstanding Effort</option>
+                </select>
+            </div>
+        </div>
+        <div class='form-row'>
+            <div class='form-group col -4'>
+                <label for="date">Date of Award</label>
+                <input type='date' id='aDate'>
+            </div>
+        </div>
+        <button type='submit' class='btn btn-primary'>Issue Award</button>
+        <a class="btn btn-primary" href="/userHome" role="button">Cancel</a>
+    </form>
+</div>
