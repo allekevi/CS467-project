@@ -1,7 +1,7 @@
 module.exports = function(){
     var express = require('express');
     var router = express.Router();
-    var transporter = require('./mailer');
+    var transporter = require('./mailer.js');
     var latex = require('node-latex');
     var fse = require('fs-extra');
    /* 
@@ -91,7 +91,7 @@ module.exports = function(){
         });*/
         
         var options = {
-            args: ["\\def\\my_var{NotTEST}"]
+            args: ["\\def\\my_var{NOT TEST}"]
         }
         var output = fse.createWriteStream('out.pdf');
         var input = fse.createReadStream('EmpOMon.tex');
