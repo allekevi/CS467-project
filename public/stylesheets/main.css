@@ -1,0 +1,250 @@
+body {
+	margin: 0px;
+	padding: 0px;
+	background-color: #F2F2F2;
+}
+
+button {
+	cursor: pointer;
+}
+
+hr {
+	display: block;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid #F2F2F2;
+}
+
+input[type="submit"]{
+	margin-left: 40px;
+	border: 2px solid #000000;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	height: 60px;
+	width: 200px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 23px;
+	margin-bottom: 80px;
+}
+
+table {
+	margin-left: 40px;
+	margin-top: 20px;
+	padding-bottom: 80px;
+	border-collapse:separate; 
+	border-spacing:10px;
+}
+
+#password_confirm {
+	width: 905px;
+	margin-top: 20px;
+	margin-bottom: 80px;
+}
+
+#headerRow {
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 22px;
+	text-align: left;
+}
+
+#logo {
+	float:right;
+	padding-top: 5px;
+	padding-right: 10px;
+	text-align: right;
+}
+
+#myEmail{
+	width: 905px;
+	margin-top: 20px;
+	background-color: #F2F2F2;
+	color: #B3B3B3;
+	margin-bottom: 80px;
+}
+
+#password {
+	width: 905px;
+}
+
+#usermenu {
+	width: 1500px;
+}
+
+.active {
+	font-weight: bold;
+}
+
+.admincell {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+.arrow-down {
+	width: 0; 
+	height: 0; 
+	border-left: 20px solid transparent;
+	border-right: 20px solid transparent; 
+	border-top: 20px solid #0070C0;
+}
+
+.awardcell {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.buttoncell {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.cancel {
+	margin-left: 30px;
+	border: 2px solid #B3B3B3;
+	color: #B3B3B3;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	height: 60px;
+	width: 200px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 23px;
+}
+
+.centeredCol {
+	text-align: center;
+}
+
+.datacell {
+	vertical-align: middle;
+}
+
+.dataRow {
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 22px;
+	text-align: left;
+}
+
+.delete {
+	border: 2px solid #FF0000;
+	color: #FF0000;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	height: 40px;
+	width: 175px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 23px;
+}
+
+.edit {
+	border: 2px solid #B3B3B3;
+	color: #B3B3B3;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	height: 40px;
+	width: 175px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 23px;
+}
+
+.inactive a:hover {
+	background-color: #005696;
+}
+
+.input {
+	height: 50px;
+	width: 425px;
+	border: 1px solid #BDBDBD;
+	border-radius: 10px;
+	margin-left: 40px;
+	margin-top: 10px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 24px;
+	padding-left: 10px;
+}
+
+.menu {
+	background-color: #FFFFFF;
+	border-radius: 25px;
+	height: auto;
+	margin: 0 auto;
+	margin-top: 60px;
+	margin-bottom: 30px;
+	padding-top: 20px;
+	width: 1000px;
+}
+
+.menutitle {
+	color: #535447;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 24px;
+	font-weight: bold;
+	padding-left: 40px;
+	padding-bottom: 10px;
+}
+
+.navitem {
+	float: left;
+	width: 220px;
+}
+
+.navitem a {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 14px 0px;
+	text-decoration: none;
+}
+
+.navmenu {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #0070C0;
+}
+
+.subinactive a:hover {
+	background-color: #5C5C5C;
+}
+
+.subitem {
+	float: left;
+	width: 220px;
+}
+
+.subitem a {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 14px 0px;
+	text-decoration: none;
+}
+
+.submenu {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #7F7F7F;
+}
+
+.subnav {
+    font-family: "Segoe UI Light", Arial;
+	font-style: normal;
+	font-size: 20px;
+}
+
+.topnav {
+    font-family: "Segoe UI Light", Arial;
+	font-style: normal;
+	font-size: 24px;
+}

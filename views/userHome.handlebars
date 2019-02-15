@@ -1,20 +1,21 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="text-center">Welcome {User}</h1>   <!-- replace user with handlebars-->
+            <h1 class="text-center">Welcome {{user.first_name}} {{user.last_name}}</h1>   <!-- replace user with handlebars-->
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <h4 class="text-center">You have {total} awards</h4>
+            <h4 class="text-center">You have {{total}} awards</h4>
         </div>
     </div>
-    <!-- VIEW button pop up of award/overlay?-->
+    <!-- drop completely for simplicity sake?-->
     <div class="row">
         <div class="col">
             <h4 class="text-center">Your most recent award {aType}<button><a href="/{awardID}">VIEW</a></button></h4>
         </div>
     </div>
+    
     <div class="row">
         <div class="col">
             <h4 class="text-center"><a href="/userhome/newAward">Create Award</a></h4>
@@ -23,11 +24,6 @@
     <div class="row">
         <div class="col">
             <h4 class="text-center"><a href="/viewAwards:{userId}">View Your Awards</a></h4>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h4 class="text-center"><a href="/viewTraining:{userId}">View Your Training Certificates</a></h4>
         </div>
     </div>
     <div class="row">

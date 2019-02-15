@@ -1,24 +1,68 @@
+/********************************************************************************************************
+Team: Tabit
+Authors: Kevin Allen, Lonnie Clark, Christina Curran
+Date: 2/8/2018
+Class: CS467, Section 400
+********************************************************************************************************/
+
+/********************************************************************************************************
+Variable Setup
+********************************************************************************************************/
+// express/handlebar setup
 var express = require('express');
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
-var bodyParser = require('body-parser');
-//var mysql = require('./dbcon.js');
-
 var app = express();
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use('/public', express.static('public'));
-
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-app.set('port', 1000);
-//app.set('mysql', mysql);
 
+//POST setup
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+//MySQL setup
+var mysql = require('./dbcon.js');
+app.set('mysql', mysql);
+
+//Session setup
+var session = require('express-session');
+app.use(session({secret: 'TabitNotSoSecret', resave: true, saveUninitialized:true}));
+
+//other settings
+app.use('/static', express.static('public'));
+app.set('port', process.argv[2]);
+
+//render the login page
 app.get('/', function(req, res){
-  res.render('genHome');
+  res.render('genHome', {layout:false});
+})
+
+//POST request to confirm login info
+app.post('/', function(req, res){
+  mysql.pool.query("SELECT * FROM users WHERE email=? AND password=?", [req.body.email, req.body.password], function(error, results, fields){
+    if(error){
+      res.write(JSON.stringify(error));
+      res.end();
+    }
+    if(results.length > 0){
+      req.session.loggedin =true;
+      req.session.context= results[0];
+      
+      if(results[0].admin_flag == 1){ //if admin go to admin home
+        res.redirect('/adminHome');
+      }
+      else{
+        res.redirect('/userHome');  //else go to userhome
+      }
+    }
+    else{
+      res.send("Incorrect user name and/or password");
+    }
+  })
 })
 
 app.use('/userHome', require('./userHome.js'));
+app.use('/adminHome', require('./adminHome.js'));
 
 app.use(function(req,res){
     res.status(404);
