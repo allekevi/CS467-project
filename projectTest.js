@@ -37,7 +37,7 @@ app.get('/', function(req, res){
   res.render('genHome', {layout:false});
 })
 
-//POST request to confirm login info
+//POST request to confirm login info, login coding adapted from https://codeshack.io/basic-login-system-nodejs-express-mysql
 app.post('/', function(req, res){
   mysql.pool.query("SELECT * FROM users WHERE email=? AND password=?", [req.body.email, req.body.password], function(error, results, fields){
     if(error){
@@ -49,7 +49,7 @@ app.post('/', function(req, res){
       req.session.context= results[0];
       
       if(results[0].admin_flag == 1){ //if admin go to admin home
-        res.redirect('/adminHome');
+        res.redirect('/manageusers');
       }
       else{
         res.redirect('/userHome');  //else go to userhome
@@ -62,18 +62,18 @@ app.post('/', function(req, res){
 })
 
 app.use('/userHome', require('./userHome.js'));
-app.use('/adminHome', require('./adminHome.js'));
+app.use('/manageusers', require('./adminHome.js'));
 
 app.use(function(req,res){
     res.status(404);
-    res.render('404');
+    res.render('404', {layout:false});
   });
   
   app.use(function(err, req, res, next){
     console.error(err.stack);
     res.type('plain/text');
     res.status(500);
-    res.render('500');
+    res.render('500', {layout:false});
   });
 
   app.listen(app.get('port'), function(){

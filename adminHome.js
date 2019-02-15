@@ -43,7 +43,7 @@ module.exports = function(){
     });
     
     //delete function
-    router.delete('/manageusers/:id', isLoggedIn, function (req, res) {
+    router.delete('/:id', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
         var sql = "UPDATE tabitcapstone.users SET users.active_flag = 0 WHERE user_id = ?";
     
