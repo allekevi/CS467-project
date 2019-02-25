@@ -34,7 +34,7 @@ app.set('port', process.argv[2]);
 
 //render the login page
 app.get('/', function(req, res){
-  res.render('genHome', {layout:false});
+  res.render('genHome');
 })
 
 //POST request to confirm login info, login coding adapted from https://codeshack.io/basic-login-system-nodejs-express-mysql
