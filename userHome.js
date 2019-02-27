@@ -88,6 +88,7 @@ module.exports = function(){
        
     });
 
+    //page for edit profile
     router.get('/editProfile', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
         var id = req.session.context.user_id;
@@ -108,8 +109,8 @@ module.exports = function(){
     //router for editing profile
     router.put('/editProfile/:id', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
-        var context = [req.body.first_name, req.body.last_name, req.body.email, req.body.password, req.params.id];
-        var sql = "UPDATE users SET first_name=?, last_name=?, email=?, password=? WHERE user_id=?"
+        var context = [req.body.first_name, req.body.last_name, req.body.email, req.body.password, req.params.id];  //edit user signiture
+        var sql = "UPDATE users SET first_name=?, last_name=?, email=?, password=? WHERE user_id=?"     //insert usert signiture
         mysql.pool.query(sql, context, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
@@ -176,7 +177,7 @@ module.exports = function(){
                         // setup mail options
                         var mailoptions={
                             from:'467Kudos@gmail.com',
-                            to: '467Kudos@gmail.com',          //test email, change to email recipient
+                            to: '467Kudos@gmail.com',    //recv.user.email      //test email, change to email recipient 
                             subject:'You have a new award',
                             text:'New award is the attached file',
                             attachments: [{path: './public/award.pdf'}]
@@ -187,11 +188,13 @@ module.exports = function(){
                             var output = fse.createWriteStream('./public/award.pdf');
                             var pdf = latex(input, options).pipe(output);
                             pdf.on('error', err => console.error(err));
-                            //email the award
-                            transporter.sendMail(mailoptions, function(error, info){
-                                if(error){
-                                    console.log(error)
-                                }
+                            pdf.on('finish', () => {
+                                //send email award
+                                transporter.sendMail(mailoptions, function(error, info){
+                                    if(error){
+                                        console.log(error);
+                                    }
+                                });
                             });
                             res.redirect('/userHome');
                         }
@@ -201,55 +204,21 @@ module.exports = function(){
                             var output = fse.createWriteStream('./public/award.pdf');
                             var pdf = latex(input, options).pipe(output);
                             pdf.on('error', err => console.error(err));
-                            //email the award
-                            transporter.sendMail(mailoptions, function(error, info){
-                                if(error){
-                                     console.log(error)
-                                }
+                            pdf.on('finish', () => {
+                                //send email award
+                                transporter.sendMail(mailoptions, function(error, info){
+                                    if(error){
+                                        console.log(error);
+                                    }
+                                });
                             });
                             res.redirect('/userHome');
                         }
                     }
                 }
-/*
-
-                //email award
-                var mailoptions={
-                    from ='476Kudos@gmail.com',
-                    to = '476Kudos@gmail.com',          //test email, change to email recipient
-                    subject='You have a new award',
-                    text='New award is the attached file'
-                    attachments: [{path: './public/award.pdf'}]
-                };
-                transporter.sendMail(mailoptions, function(error, info){
-                    if(error){
-                        console.log(error);
-                    }
-                });
-                //redirect to home
-                res.redirect('/userHome');*/
             }
-        });/*
-        
-        //process the dates from the form
-        var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ]
-        dateSplit = req.body.date.split("-")
-        req.body.year = dateSplit[0];
-        req.body.month = months[parseInt(dateSplit[1])-1];
-        req.body.day = dateSplit[2];
-        console.log(req.body);
-        var options = {
-            args: ["\\def\\monVar{"+req.body.month+" }\\def\\recvVar{"+req.body.first_name+" "+req.body.last_name+"}\\def\\dayVar{"+req.body.day+" }\\def\\yearVar{"+req.body.year+"}\\def\\sendVar{Jesus Christo}\\def\\sendSig{Animage}"],
-            errorLogs:"./public/error.txt"
-            //inputs: "./public/images/KudosLogoBlue.png"
-        }
-        var output = fse.createWriteStream('./public/out.pdf');
-        var input = fse.createReadStream('./public/EmpOfMon.tex');
-        var pdf = latex(input, options);
-        pdf.pipe(output);
-        pdf.on('error', err => console.error(err));
-        //output.end();
-        res.redirect('/userHome');*/
+        });
+ 
     });
     
     return router;
