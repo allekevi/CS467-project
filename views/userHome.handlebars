@@ -3,7 +3,7 @@
 			<li class = "navitem" style="width:210px"><div class="active"><a href="/userHome">Home</a></div></li>
 			<li class = "navitem" style="width:210px"><div class="inactive"><a href="/userHome/newAward">Create Award</a></div></li>
             <li class = "navitem" style="width:210px"><div class="inactive"><a href="/userHome/myAwards">My Awards</a></div></li>
-            <li class = "navitem" style="width:210px"><div class="inactive"><a href="/userHome/manageAwards">Manage Awards</a></div></li>
+            <li class = "navitem" style="width:210px"><div class="inactive"><a href="/userHome/manageawards">Manage Awards</a></div></li>
 			<li class = "navitem" style="width:210px"><div class ="inactive"><a href="/userHome/editProfile">Edit Profile</a></div></li>
             <li class = "navitem" style="width:210px"><div class="inactive"><a href="/logout">Log out</a></div></li>
             <li class = "navitem" id="logo"><img src="/static/images/KudosLogo.png" width="" height="50px"></li>
@@ -13,13 +13,9 @@
 <div class="menu">
     <h1 class="menutitle" style="font-size: 35px; text-align:center">Welcome {{user.first_name}} {{user.last_name}}</h1>   <!-- replace user with handlebars-->
     <h4 class="menutitle" style="text-align:center">You have {{total}} awards</h4>
-
-    <!-- drop completely for simplicity sake?-->
-    <h4 class="menutitle" style="text-align:center">Your most recent award {aType}<button><a href="/{awardID}">VIEW</a></button></h4>
-
     <h4 class="menutitle" style="text-align:center"><a href="/userhome/newAward">Create Award</a></h4>
-    <h4 class="menutitle" style="text-align:center"><a href="/viewAwards:{userId}">View Your Awards</a></h4>
-    <h4 class="menutitle" style="text-align:center"><a href="/manageAwards:{userId}">Manage Awards You've Given</a></h4>
+    <h4 class="menutitle" style="text-align:center"><a href="/viewAwards">View Your Awards</a></h4>
+    <h4 class="menutitle" style="text-align:center"><a href="/userHome/manageawards">Manage Awards You've Given</a></h4>
     <h4 class="menutitle" style="text-align:center"><a href="/userHome/editProfile">Edit Profile</a></h4>
 </div>
 

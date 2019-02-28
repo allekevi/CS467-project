@@ -60,6 +60,22 @@ module.exports = function(){
             }
         })
     }
+    //get awards to populate manage awards page
+    function getAwardsBySend(res, mysql, context, id, complete){    // V fix below V need to get awardee name
+        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.user_id = u.user_id WHERE ua.created_by=?";
+        mysql.pool.query(sql, id, function(error, results, fields){
+            if(error){
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            else{
+                context.awards = results;
+                console.log(context.awards);
+                complete();
+            }
+        })
+
+    }
     //function to make sure session is still active
     function isLoggedIn(req, res, next){
         if(req.session.loggedin){
@@ -87,7 +103,36 @@ module.exports = function(){
         }
        
     });
+    //page to manage awards given by current user
+    router.get('/manageawards', isLoggedIn, function(req, res){
+        var mysql = req.app.get('mysql');
+        var context={};
+        context.jsscripts =["deleteAward"];
+        var callbackcount=0;
+        var id = req.session.context.user_id;
+        getAwardsBySend(res, mysql, context, id, complete);
+        function complete(){
+            callbackcount++;
+            if(callbackcount >=1){
+                res.render('manageawards', context);
+            }
+        }
+    });
 
+    //setup for deleting award
+    router.delete('/:id', isLoggedIn, function(req, res){
+        var mysql = req.app.get('mysql');
+        var id = [req.params.id];
+        mysql.pool.query("DELETE FROM user_awards WHERE award_id =?", id, function(error, results, fields){
+            if(error){
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            else{
+                res.status(202).end();
+            }
+        });
+    });
     //page for edit profile
     router.get('/editProfile', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
