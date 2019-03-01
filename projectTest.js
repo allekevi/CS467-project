@@ -15,11 +15,6 @@ var app = express();
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
-//POST setup
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
 //MySQL setup
 var mysql = require('./dbcon.js');
 app.set('mysql', mysql);
@@ -27,6 +22,10 @@ app.set('mysql', mysql);
 //Session setup
 var session = require('express-session');
 app.use(session({secret: 'TabitNotSoSecret', resave: true, saveUninitialized:true}));
+
+//Formidable setup fom handling multipart data
+var eFormidable = require('express-formidable');
+app.use(eFormidable());
 
 //other settings
 app.use('/static', express.static('public'));
@@ -39,7 +38,7 @@ app.get('/', function(req, res){
 
 //POST request to confirm login info, login coding adapted from https://codeshack.io/basic-login-system-nodejs-express-mysql
 app.post('/', function(req, res){
-  mysql.pool.query("SELECT * FROM users WHERE email=? AND password=?", [req.body.email, req.body.password], function(error, results, fields){
+  mysql.pool.query("SELECT * FROM users WHERE email=? AND password=?", [req.fields.email, req.fields.password], function(error, results, fields){
     if(error){
       res.write(JSON.stringify(error));
       res.end();

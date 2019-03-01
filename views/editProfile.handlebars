@@ -9,9 +9,9 @@
 			<li class = "navitem" id="logo"><img src="/static/images/KudosLogo.png" width="" height="50px"></li>
 		</ul>
 	</div>
-	<div class="arrow-down" style="margin-left:970px;"></div>
+	<div class="arrow-down" style="margin-left:930px;"></div>
 <div class="menu">
-    <form id="edit-profile">
+    <form id="edit-profile" enctype="multipart/form-data">
         <label for="fName" class="menutitle">First Name</label>
         <input type="text" class="input" name="first_name" placeholder="First Name" value="{{user.first_name}}"><br>
         <label for="lName" class="menutitle">Last Name</label>
@@ -26,16 +26,15 @@
         <hr>
         <div>
             <label for="sigImg" class="menutitle">Current Signature</label>
-            <img src='/static/images/JohnDoe.png' class='img-thumbnail'>
+            <img src='/static/images/{{user.signature}}' class='img-thumbnail'>
         </div>
         <div>
             <label for="sigSub" class="menutitle">Upload new Signature</label>
-            <input type="file" class="input-file" id="sigSub">
+            <input type="file" name='sigImg' class="input-file" id="sigSub">
         </div>
         <br>
         <button class="submitchanges" onclick="editUser({{user.user_id}})">Submit Changes</button> 
         <a href="/userHome"><button class="cancel" type="button">Cancel</button></a>   
-    
     </form>
     
 </div>

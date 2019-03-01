@@ -4,7 +4,8 @@ module.exports = function(){
     var transporter = require('./mailer.js');
     var latex = require('node-latex');
     var fse = require('fs-extra');
-    
+    var formidable = require('formidable');
+
     //get the number of awards for current user
     function getUserAwardNum(res, mysql, context, id, complete){
         var sql= "SELECT COUNT(*) AS total FROM user_awards WHERE user_id = ?";
@@ -144,7 +145,6 @@ module.exports = function(){
         function complete(){
             callbackcount++;
             if(callbackcount >= 1){
-                context.layout = 'admin';
                 res.render('editProfile', context);
             }
         }
@@ -154,14 +154,24 @@ module.exports = function(){
     //router for editing profile
     router.put('/editProfile/:id', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
-        var context = [req.body.first_name, req.body.last_name, req.body.email, req.body.password, req.params.id];  //edit user signiture
-        var sql = "UPDATE users SET first_name=?, last_name=?, email=?, password=? WHERE user_id=?"     //insert usert signiture
+        if(req.files.sigImg.size == 0 ){
+            var context = [req.fields.first_name, req.fields.last_name, req.fields.email, req.fields.password, req.params.id];  //edit user signiture
+            var sql = "UPDATE users SET first_name=?, last_name=?, email=?, password=? WHERE user_id=?"     //insert usert signiture
+        }
+        else{
+            var name = req.params.id + "." + req.files.sigImg.name.split('.').pop();
+            
+            var context = [req.fields.first_name, req.fields.last_name, req.fields.email, req.fields.password, name, req.params.id];  //edit user signiture
+            var sql = "UPDATE users SET first_name=?, last_name=?, email=?, password=?, signature=? WHERE user_id=?"     //insert usert signiture
+        }
         mysql.pool.query(sql, context, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
             }
             else{
+                //move file into images folder
+                fse.copy(req.files.sigImg.path, './public/images/'+name)
                 res.status(200);
                 res.end();
             }
@@ -188,9 +198,9 @@ module.exports = function(){
     router.post('/newAward', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
         var id = req.session.context.user_id;
-        req.body.createDate = new Date();
+        req.fields.createDate = new Date();
         var sql = 'INSERT INTO user_awards (user_id, award_id, award_date, created_by, created_date) VALUES(?,?,?,?,?)';
-        var data = [req.body.name, req.body.aType, req.body.date, id,req.body.createDate];
+        var data = [req.fields.name, req.fields.aType, req.fields.date, id,req.fields.createDate];
         
         mysql.pool.query(sql, data, function(error, results, fields){
             if(error){
@@ -203,20 +213,20 @@ module.exports = function(){
                 var callbackcount =0;
                 var recv={};
                 var send={};
-                getUserInfo(res, mysql, recv, req.body.name, complete)
+                getUserInfo(res, mysql, recv, req.fields.name, complete)
                 getUserInfo(res, mysql, send, req.session.context.user_id, complete)
                 function complete(){
                     callbackcount++;
                     if(callbackcount>=2){
                         //process date string
                         var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-                        dateSplit = req.body.date.split("-");
-                        req.body.year = dateSplit[0];
-                        req.body.month = months[parseInt(dateSplit[1])-1];
-                        req.body.day = dateSplit[2];
+                        dateSplit = req.fields.date.split("-");
+                        req.fields.year = dateSplit[0];
+                        req.fields.month = months[parseInt(dateSplit[1])-1];
+                        req.fields.day = dateSplit[2];
                         //insert data into latex form
-                        var options ={                    //!!!!!!!!!!!!!!!!!!!!!!!!!!Still need to add sender signiture!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            args: ["\\def\\monVar{"+req.body.month+" }\\def\\recvVar{"+recv.user.first_name+" "+recv.user.last_name+"}\\def\\dayVar{"+req.body.day+" }\\def\\yearVar{"+req.body.year+"}\\def\\sendVar{"+send.user.first_name+" "+send.user.last_name+"}\\def\\sendSig{JohnDoe}"],
+                        var options ={                    
+                            args: ["\\def\\monVar{"+req.fields.month+" }\\def\\recvVar{"+recv.user.first_name+" "+recv.user.last_name+"}\\def\\dayVar{"+req.fields.day+" }\\def\\yearVar{"+req.fields.year+"}\\def\\sendVar{"+send.user.first_name+" "+send.user.last_name+"}\\def\\sendSig{"+send.user.signature+"}"],
                             errorLogs:"./public/error.txt"
                         }
                         // setup mail options
@@ -228,7 +238,7 @@ module.exports = function(){
                             attachments: [{path: './public/award.pdf'}]
                         };
                         //make Employee of the Month award
-                        if(req.body.aType == "1"){
+                        if(req.fields.aType == "1"){
                             var input = fse.createReadStream('./public/EmpOfMon.tex');
                             var output = fse.createWriteStream('./public/award.pdf');
                             var pdf = latex(input, options).pipe(output);
@@ -244,7 +254,7 @@ module.exports = function(){
                             res.redirect('/userHome');
                         }
                         //make Outstanding contribution award
-                        else if(req.body.aType == "2"){
+                        else if(req.fields.aType == "2"){
                             var input = fse.createReadStream('./public/OutCont.tex');
                             var output = fse.createWriteStream('./public/award.pdf');
                             var pdf = latex(input, options).pipe(output);

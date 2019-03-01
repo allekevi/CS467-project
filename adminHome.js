@@ -96,7 +96,7 @@ module.exports = function(){
         var mysql = req.app.get('mysql');
         var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ? WHERE users.user_id = 3";
     
-        var inserts = [req.body.first_name, req.body.last_name, req.body.password];
+        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.password];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
@@ -145,7 +145,7 @@ module.exports = function(){
         var mysql = req.app.get('mysql');
         var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ? WHERE users.user_id = ?";
     
-        var inserts = [req.body.first_name, req.body.last_name, req.body.id];
+        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.id];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
