@@ -15,7 +15,9 @@ module.exports = function(){
     router.get('/', isLoggedIn, function (req, res) {  // return '/manageusers' here once/if admin home is created
         //populate current users table
         function getUserTable(res, mysql, context, complete) {
-            mysql.pool.query("SELECT users.user_id, users.first_name, users.last_name, users.email, users.admin_flag AS admin, CASE WHEN userawards.awards IS NULL THEN 0 ELSE userawards.awards END AS awards FROM tabitcapstone.users LEFT JOIN ( SELECT user_id, COUNT(distinct(award_id)) AS awards FROM tabitcapstone.user_awards WHERE active_flag = 1 GROUP BY user_id) AS userawards ON tabitcapstone.users.user_id = userawards.user_id WHERE users.active_flag = 1", function (error, results, fields) {
+            var sql = "SELECT users.user_id, users.first_name, users.last_name, users.email, users.admin_flag AS admin, CASE WHEN userawards.awards IS NULL THEN 0 ELSE userawards.awards END AS awards FROM tabitcapstone.users LEFT JOIN(SELECT user_id, COUNT(distinct(award_id)) AS awards FROM tabitcapstone.user_awards WHERE active_flag = 1 GROUP BY user_id) AS userawards ON tabitcapstone.users.user_id = userawards.user_id WHERE users.active_flag = 1 AND users.user_id != ?";
+            var inserts = [req.session.context.user_id];
+            mysql.pool.query(sql, inserts, function (error, results, fields) {
                 if (error) {
                     res.write(JSON.stringify(error));
                     res.end();
@@ -45,9 +47,9 @@ module.exports = function(){
     //delete function
     router.delete('/:id', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "UPDATE tabitcapstone.users SET users.active_flag = 0 WHERE user_id = ?";
-    
-        var inserts = [req.params.id];
+        var sql = "UPDATE tabitcapstone.users SET users.active_flag = 0, modified_by = ?, modified_date = ? WHERE user_id = ?";
+        var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        var inserts = [req.session.context.user_id, d, req.params.id];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
@@ -65,8 +67,8 @@ module.exports = function(){
     router.get('/editprofile', isLoggedIn, function (req, res) {
         //retrieve single user
         function getSingleUser(res, mysql, context, id, complete) {
-            var sql = "SELECT users.user_id, users.first_name, users.last_name, users.email FROM tabitcapstone.users WHERE users.user_id = 3";
-            var inserts = [id];
+            var sql = "SELECT users.user_id, users.first_name, users.last_name, users.email FROM tabitcapstone.users WHERE users.user_id = ?";
+            var inserts = [req.session.context.user_id];
             mysql.pool.query(sql, inserts, function (error, results, fields) {
                 if (error) {
                     res.write(JSON.stringify(error));
@@ -94,15 +96,15 @@ module.exports = function(){
     //edit user
     router.post('/editprofile', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ? WHERE users.user_id = 3";
-    
-        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.password];
+        var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ?, users.modified_by = ?, modified_date = ? WHERE users.user_id = ?";
+        var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.password, req.session.context.user_id, d, req.session.context.user_id];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
                 res.end()
             } else {
-                res.redirect('/editprofile');
+                res.redirect('/manageusers');
             }
         });
     });
@@ -143,9 +145,9 @@ module.exports = function(){
     //edit user
     router.post('/edituser/:id', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ? WHERE users.user_id = ?";
-    
-        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.id];
+        var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.modified_by = ?, users.modified_date = ? WHERE users.user_id = ?";
+        var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        var inserts = [req.fields.first_name, req.fields.last_name, req.session.context.user_id, d, req.fields.id];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
