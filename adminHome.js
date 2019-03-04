@@ -98,7 +98,14 @@ module.exports = function(){
         var mysql = req.app.get('mysql');
         var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ?, users.modified_by = ?, modified_date = ? WHERE users.user_id = ?";
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.password, req.session.context.user_id, d, req.session.context.user_id];
+        var pass = 0
+        if (req.fields.password == "") {
+            pass = req.session.context.password;
+        }
+        else {
+            pass = req.fields.password;
+        }
+        var inserts = [req.fields.first_name, req.fields.last_name, pass, req.session.context.user_id, d, req.session.context.user_id];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
@@ -157,7 +164,78 @@ module.exports = function(){
             }
         });
     });
-    
+
+    /********************************************************************************************************
+    Analytics Trend Page  
+    ********************************************************************************************************/
+    //load function, use persisted identity
+    router.get('/analyticstrend', isLoggedIn, function (req, res) {
+        //Placeholder function
+        function dummy(res, mysql, context, id, complete) {
+            complete();
+        }
+
+        //populate page
+        var callbackCount = 0;
+        var context = {};
+        var mysql = req.app.get('mysql');
+        dummy(res, mysql, context, req.params.id, complete);
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= 1) {
+                context.layout = 'admin';
+                res.render('analyticstrend', context);
+            }
+        }
+    });
+
+    /********************************************************************************************************
+    Analytics Most Page  
+    ********************************************************************************************************/
+    //load function, use persisted identity
+    router.get('/analyticsmost', isLoggedIn, function (req, res) {
+        //Placeholder function
+        function dummy(res, mysql, context, id, complete) {
+            complete();
+        }
+
+        //populate page
+        var callbackCount = 0;
+        var context = {};
+        var mysql = req.app.get('mysql');
+        dummy(res, mysql, context, req.params.id, complete);
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= 1) {
+                context.layout = 'admin';
+                res.render('analyticsmost', context);
+            }
+        }
+    });
+
+    /********************************************************************************************************
+    Analytics Feedback Page  
+    ********************************************************************************************************/
+    //load function, use persisted identity
+    router.get('/analyticsfeedback', isLoggedIn, function (req, res) {
+        //Placeholder function
+        function dummy(res, mysql, context, id, complete) {
+            complete();
+        }
+
+        //populate page
+        var callbackCount = 0;
+        var context = {};
+        var mysql = req.app.get('mysql');
+        dummy(res, mysql, context, req.params.id, complete);
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= 1) {
+                context.layout = 'admin';
+                res.render('analyticsfeedback', context);
+            }
+        }
+    });
 
     return router;
 
