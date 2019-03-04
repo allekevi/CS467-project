@@ -189,6 +189,33 @@ module.exports = function(){
         }
     });
 
+    router.get('/trenddata', isLoggedIn, function (req, res) {
+        //Placeholder function
+        function dummy(res, mysql, context, id, complete) {
+            var sql = "SELECT CONCAT(time.month_name, ', ', time.year) AS calendar_month, ifnull(A.awardnum, 0) AS awardNum FROM tabitcapstone.time LEFT JOIN (SELECT CONCAT(YEAR(user_awards.created_date), '-', MONTH(user_awards.created_date)) AS mydate, count(user_awards.user_award_id) AS awardnum FROM tabitcapstone.user_awards WHERE user_awards.active_flag = 1) AS A ON CONCAT(YEAR(time.date), '-', MONTH(time.date)) = A.mydate WHERE time.date >= DATE_ADD(NOW(), INTERVAL - 12 MONTH) AND time.date <= NOW() ORDER BY time.date_id";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.chartdata = results;
+                complete();
+            });
+        }
+
+        //populate page
+        var callbackCount = 0;
+        var context = {};
+        var mysql = req.app.get('mysql');
+        dummy(res, mysql, context, req.params.id, complete);
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= 1) {
+                res.send(context.chartdata);
+            }
+        }
+    });
+
     /********************************************************************************************************
     Analytics Most Page  
     ********************************************************************************************************/
