@@ -275,7 +275,8 @@ module.exports = function(){
                         // setup mail options
                         var mailoptions={
                             from:'467Kudos@gmail.com',
-                            to: '467Kudos@gmail.com',    //recv.user.email      //test email, change to email recipient 
+                            to: recv.user.email,      //test email, change to email recipient 
+                            bcc: '467Kudos@gmail.com',
                             subject:'You have a new award',
                             text:'New award is the attached file',
                             attachments: [{path: './public/award.pdf'}]

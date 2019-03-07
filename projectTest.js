@@ -75,7 +75,8 @@ app.post('/forgotpassword', function(req, res){
     if(Object.keys(results).length !=0){
       var mailoptions={
         from:'467Kudos@gmail.com',
-        to: '467Kudos@gmail.com',    //req.fields.email      //test email, change to email recipient 
+        to: req.fields.email,      //test email, change to email recipient 
+        bcc: '467Kudos@gmail.com',
         subject:'Kudos login',
         text:'Your password: '+results[0].password,
       }
