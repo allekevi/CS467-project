@@ -63,7 +63,7 @@ module.exports = function(){
     }
     //get awards to populate manage awards page
     function getAwardsBySend(res, mysql, context, id, complete){    // V fix below V need to get awardee name
-        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.user_id = u.user_id WHERE ua.created_by=?";
+        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name, ua.user_award_id FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.user_id = u.user_id WHERE ua.created_by=?";
         mysql.pool.query(sql, id, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
@@ -71,7 +71,36 @@ module.exports = function(){
             }
             else{
                 context.awards = results;
-                console.log(context.awards);
+                complete();
+            }
+        })
+
+    }
+        //get awards to populate manage awards page
+    function getAwardsBySend(res, mysql, context, id, complete){    // V fix below V need to get awardee name
+        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name, ua.user_award_id FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.user_id = u.user_id WHERE ua.created_by=?";
+        mysql.pool.query(sql, id, function(error, results, fields){
+            if(error){
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            else{
+                context.awards = results;
+                complete();
+            }
+        })
+
+    }
+    //get awards to populate my awards page
+    function getMyAwards(res, mysql, context, id, complete){    // V fix below V need to get awardee name
+        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name, ua.user_award_id FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.created_by= u.user_id WHERE ua.user_id=?";
+        mysql.pool.query(sql, id, function(error, results, fields){
+            if(error){
+                res.write(JSON.stringify(error));
+                res.end();
+            }
+            else{
+                context.awards = results;
                 complete();
             }
         })
@@ -108,7 +137,7 @@ module.exports = function(){
     router.get('/manageawards', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
         var context={};
-        context.jsscripts =["deleteAward"];
+        context.jsscripts =["deleteAward.js"];
         var callbackcount=0;
         var id = req.session.context.user_id;
         getAwardsBySend(res, mysql, context, id, complete);
@@ -121,10 +150,10 @@ module.exports = function(){
     });
 
     //setup for deleting award
-    router.delete('/:id', isLoggedIn, function(req, res){
+    router.delete('/manageawards/:id', isLoggedIn, function(req, res){
         var mysql = req.app.get('mysql');
         var id = [req.params.id];
-        mysql.pool.query("DELETE FROM user_awards WHERE award_id =?", id, function(error, results, fields){
+        mysql.pool.query("DELETE FROM user_awards WHERE user_award_id =?", id, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
@@ -133,6 +162,20 @@ module.exports = function(){
                 res.status(202).end();
             }
         });
+    });
+    //page for viewing awards recieved
+    router.get('/myAwards', isLoggedIn, function(req, res){
+        var mysql = req.app.get('mysql');
+        var context = {};
+        var callbackcount=0;
+        var id = req.session.context.user_id;
+        getMyAwards(res, mysql, context, id, complete);
+        function complete(){
+            callbackcount++;
+            if(callbackcount>=1){
+                res.render('viewawards', context);
+            }
+        }
     });
     //page for edit profile
     router.get('/editProfile', isLoggedIn, function(req, res){

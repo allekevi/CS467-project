@@ -28,8 +28,9 @@ var eFormidable = require('express-formidable');
 app.use(eFormidable());
 
 //other settings
-app.use('/static', express.static('public'));
-app.set('port', process.argv[2]);
+app.use('/static', express.static('public')); //public file storage
+app.set('port', process.argv[2]);         //determine port number to run
+var transporter = require('./mailer.js'); //for emailing password reset
 
 //render the login page
 app.get('/', function(req, res){
@@ -43,7 +44,7 @@ app.post('/', function(req, res){
       res.write(JSON.stringify(error));
       res.end();
     }
-    if(results.length > 0){
+    if(Object.keys(results).length !=0){
       req.session.loggedin =true;
       req.session.context= results[0];
       
@@ -59,6 +60,39 @@ app.post('/', function(req, res){
     }
   })
 })
+
+//page for retrieveing password
+app.get('/forgotpassword', function(req, res){
+  res.render('forgotpassword');
+})
+//handle post to forgotpassword, check if email in database
+app.post('/forgotpassword', function(req, res){
+  mysql.pool.query("SELECT password FROM users WHERE email=?", [req.fields.email], function(error, results, fields){
+    if(error){
+      res.write(JSON.stringify(error));
+      res.end();
+    }
+    if(Object.keys(results).length !=0){
+      var mailoptions={
+        from:'467Kudos@gmail.com',
+        to: '467Kudos@gmail.com',    //req.fields.email      //test email, change to email recipient 
+        subject:'Kudos login',
+        text:'Your password: '+results[0].password,
+      }
+      transporter.sendMail(mailoptions, function(error, info){
+        if(error){
+          console.log(error);
+        }
+      });
+      res.render('passsent');
+    }
+    else{
+      //go to create user page
+      res.render('emailnotfound');
+    }
+  })
+})
+
 //page for logging out
  app.get('/logout', function(req, res){
     req.session.destroy(function(error){
@@ -70,9 +104,12 @@ app.post('/', function(req, res){
       }
     });
   })
+
+//pages after sucessful login  
 app.use('/userHome', require('./userHome.js'));
 app.use('/manageusers', require('./adminHome.js'));
 
+//error pages
 app.use(function(req,res){
     res.status(404);
     res.render('404');
