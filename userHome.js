@@ -128,7 +128,7 @@ module.exports = function(){
             callbackcount++;
             if(callbackcount >= 2){
                 context.layout = 'admin';
-                res.render('userhome', context);
+                res.render('userHome', context);
             }
         }
        
@@ -269,7 +269,7 @@ module.exports = function(){
                         req.fields.day = dateSplit[2];
                         //insert data into latex form
                         var options ={                    
-                            args: ["\\def\\monVar{"+req.fields.month+" }\\def\\recvVar{"+recv.user.first_name+" "+recv.user.last_name+"}\\def\\dayVar{"+req.fields.day+" }\\def\\yearVar{"+req.fields.year+"}\\def\\sendVar{"+send.user.first_name+" "+send.user.last_name+"}\\def\\sendSig{"+send.user.signature+"}"],
+                            args: ["\\def\\monVar{"+req.fields.month+" }\\def\\recvVar{"+recv.user.first_name+" "+recv.user.last_name+"}\\def\\dayVar{"+req.fields.day+" }\\def\\yearVar{"+req.fields.year+"}\\def\\sendVar{"+send.user.first_name+" "+send.user.last_name+"}\\def\\sendSig{"+send.user.user_id+"}"],
                             errorLogs:"./public/error.txt"
                         }
                         // setup mail options
