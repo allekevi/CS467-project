@@ -67,7 +67,7 @@ module.exports = function(){
     //add user
     router.post('/adduser', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ?, users.created_by = ?, users.create_date = ?, users.modified_by = ?, modified_date = ? WHERE users.user_id = ?";
+        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ? WHERE users.user_id = ?";
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var pass = 0
         if (req.fields.password == "") {
