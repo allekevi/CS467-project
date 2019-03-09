@@ -18,5 +18,43 @@
 <div class="menu" id="usermenu">
     <div class="menutitle">[ANALYTICS TITLE]</div>
     <hr>
-    
+    <div>
+    <div style="padding-left: 15px; padding-right: 15px;">
+        <canvas id="myChart"></canvas>
+        <script>
+            var myx = new XMLHttpRequest();
+            var types = [];
+            var awards = [];
+            myx.open("GET", "/manageusers/mostdata", true);
+            myx.onload = function () {
+                if (myx.readyState === myx.DONE) {
+                    if (myx.status === 200) {
+                        var myData = myx.response;
+
+                        for (var i = 0; i < myData.length; i++) {
+                            types.push(myData[i]['award_name']);
+                            awards.push(myData[i]['award_count']);
+                        }
+
+                        let myChart = document.getElementById('myChart').getContext('2d');
+                        let massPopChart = new Chart(myChart, {
+                            type: 'bar',
+                            data: {
+                                labels: types,
+                                datasets: [{
+                                    label: 'Awards Given',
+                                    data: awards
+                                }]
+                            },
+                            options: {}
+                        });
+                    }
+                }
+            };
+            myx.responseType = 'json';
+            myx.send();
+
+            console.log("Hi Mom");
+        </script>
+    </div>
 </div>

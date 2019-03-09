@@ -240,6 +240,33 @@ module.exports = function(){
         }
     });
 
+    router.get('/mostdata', isLoggedIn, function (req, res) {
+        //Placeholder function
+        function dummy(res, mysql, context, id, complete) {
+            var sql = "SELECT awards.award_name, COUNT(user_awards.user_award_id) AS award_count FROM tabitcapstone.user_awards LEFT JOIN tabitcapstone.awards ON user_awards.award_id = awards.award_id WHERE user_awards.active_flag = 1 GROUP BY awards.award_name ORDER BY award_count DESC";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.chartdata = results;
+                complete();
+            });
+        }
+
+        //populate page
+        var callbackCount = 0;
+        var context = {};
+        var mysql = req.app.get('mysql');
+        dummy(res, mysql, context, req.params.id, complete);
+        function complete() {
+            callbackCount++;
+            if (callbackCount >= 1) {
+                res.send(context.chartdata);
+            }
+        }
+    });
+
     /********************************************************************************************************
     Analytics Feedback Page  
     ********************************************************************************************************/
