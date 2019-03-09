@@ -20,9 +20,9 @@
         <input type="email" class="input" name="email" placeholder="email" value="{{user.email}}">
         <hr>
         <label for="cPassword"class="menutitle">Change Password</label>
-        <input type="password" class="input" name="password" placeholder="Password" value="{{user.password}}"><br>
+        <input id="password" type="password" class="input" name="password" placeholder="Password" value="{{user.password}}"><br>
         <label for="conPassword" class="menutitle">Confirm Password</label>
-        <input type="password" class="input" id="conPassword" placeholder="Confirm Password" value="{{user.password}}"><br>
+        <input id="conPassword" type="password" class="input" id="conPassword" placeholder="Confirm Password" value="{{user.password}}"><br>
         <hr>
         <div>
             <label for="sigImg" class="menutitle">Current Signature</label>
@@ -33,7 +33,18 @@
             <input type="file" name='sigImg' class="input-file" id="sigSub">
         </div>
         <br>
-        <button class="submitchanges" onclick="editUser({{user.user_id}})">Submit Changes</button> 
+        <button class="submitchanges" onclick="check()">Submit Changes</button>
+                <script language='javascript' type='text/javascript'>
+                    function check() {
+                        if (document.getElementById('password').value != document.getElementById('conPassword').value) {
+                            document.getElementById('password').setCustomValidity('Password Must be Matching.');
+                        } else {
+                            // input is valid -- reset the error message
+                            document.getElementById('password').setCustomValidity('');
+                            editUser({{user.user_id}});
+                        }
+                    }
+                </script> 
         <a href="/userHome"><button class="cancel" type="button">Cancel</button></a>   
     </form>
     

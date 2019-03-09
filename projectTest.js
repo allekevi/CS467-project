@@ -67,7 +67,7 @@ app.get('/forgotpassword', function(req, res){
 })
 //handle post to forgotpassword, check if email in database
 app.post('/forgotpassword', function(req, res){
-  mysql.pool.query("SELECT password FROM users WHERE email=?", [req.fields.email], function(error, results, fields){
+  mysql.pool.query("SELECT password FROM users WHERE active_flag=1 AND email=?", [req.fields.email], function(error, results, fields){
     if(error){
       res.write(JSON.stringify(error));
       res.end();
