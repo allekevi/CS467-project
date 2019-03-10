@@ -1,9 +1,9 @@
 <div class="topnav">
     <ul class="navmenu">
-        <li class="navitem"><div class="inactive"><a href="/analyticstrend">Analytics</a></div></li>
-        <li class="navitem"><div class="/addusers" class="active"><a href="/adduser">Add Users</a></li>
-        <li class="navitem"><a href="/manageusers" class="active">Manage Users</a></li>
-        <li class="navitem"><div class="inactive"><a href="/editprofile">Edit Profile</a></div></li>
+        <li class="navitem"><div class="inactive"><a href="/manageusers/analyticstrend">Analytics</a></div></li>
+        <li class="navitem"><a href="/manageusers" class="inactive">Manage Users</a></li>
+        <li class="navitem"><div class="active"><a href="/manageusers/adduser">Add Users</a></div></li>
+        <li class="navitem"><div class="inactive"><a href="/manageusers/editprofile">Edit Profile</a></div></li>
         <li class = "navitem"><div class="inactive"><a href="/logout">Logout</a></div></li>
         <li class="navitem" id="logo"><img src="/static/images/KudosLogo.png" width="" height="50px"></li>
     </ul>
@@ -20,18 +20,18 @@
     <div class="menutitle">Name & Email</div>
     <hr>
     <form id="addprofile" action="./adduser" method="post">
-        <input class="input" type="text" name="first_name" placeholder="First Name" value="{{user.first_name}}" required="required">
+        <input class="input" type="text" name="first_name" placeholder="First Name" required="required">
         <br>
-        <input class="input" type="text" name="last_name" placeholder="Last Name" value="{{user.last_name}}" required="required">
+        <input class="input" type="text" name="last_name" placeholder="Last Name" required="required">
         <br>
-        <input id="myEmail" class="input" type="text" name="email" placeholder="Email Address" value="{{user.email}}" readonly>
+        <input id="myEmail" class="input" type="text" name="email" placeholder="Email Address" required>
         <br>
         <!--Site Administrator Flag <input class="input" type="checkbox" name="admin_flag" placeholder="Admin" chekced=this.admin_flag required="required">-->
         <hr>
         <div class="menutitle">Password</div>
-        <input id="password" class="input" type="password" name="password" placeholder="Create New Password">
+        <input id="password" class="input" type="password" name="password" placeholder="Create New Password" required>
         <br>
-        <input id="password_confirm" class="input" type="password" name="password_confirm" placeholder="Confirm New Password">
+        <input id="password_confirm" class="input" type="password" name="password_confirm" placeholder="Confirm New Password" required>
         <br>
         <input type="submit" value="Save Changes" style="cursor:pointer;" onclick="check()">
             <script language='javascript' type='text/javascript'>
@@ -44,8 +44,8 @@
                     }
                 }
             </script>
-        <input type="hidden" name="id" value="{{user.user_id}}">
-        <input type="submit" value="Save Changes" style="cursor:pointer;">
+        <!--<input type="hidden" name="id" value="{{user.user_id}}">-->
+        <!--<input type="submit" value="Save Changes" style="cursor:pointer;">-->
         <a href="/manageusers"><button class="cancel" type="button">Cancel</button></a>
     </form>
 </div>	
