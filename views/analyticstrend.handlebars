@@ -19,7 +19,7 @@
 <div class="menu" id="usermenu">
     <div class="menutitle">Awards Granted, Over Last 12 Months</div>
     <hr>
-    <div style="padding-left: 15px; padding-right: 15px; padding-bottom: 30px;">
+    <div style="padding-left: 40px; padding-right: 40px; padding-bottom: 30px;">
         <canvas id="myChart"></canvas>
         <script>
             var myx = new XMLHttpRequest();
@@ -55,6 +55,12 @@
             };
             myx.responseType = 'json';
             myx.send();
-            </script>
-        </div>
+        </script>
     </div>
+    <select class="filter">
+        <option value="All">All</option>
+        <option value="First">First</option>
+        <option value="Second">Second</option>
+    </select>
+    <button class="export" type="button">Export to Excel</button>
+</div>
