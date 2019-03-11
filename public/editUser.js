@@ -1,4 +1,5 @@
 function editUser(id){
+
     var formdata = new FormData(document.getElementById("edit-profile"));
     $.ajax({
         url: '/userHome/editProfile/' + id,

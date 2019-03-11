@@ -12,7 +12,7 @@ module.exports = function(){
         }
     }
 
-    router.get('/', isLoggedIn, function (req, res) {  // return '/manageusers' here once/if admin home is created
+    router.get('/', isLoggedIn, function (req, res) {  
         //populate current users table
         function getUserTable(res, mysql, context, complete) {
             var sql = "SELECT users.user_id, users.first_name, users.last_name, users.email, users.admin_flag AS admin, CASE WHEN userawards.awards IS NULL THEN 0 ELSE userawards.awards END AS awards FROM tabitcapstone.users LEFT JOIN(SELECT user_id, COUNT(distinct(award_id)) AS awards FROM tabitcapstone.user_awards WHERE active_flag = 1 GROUP BY user_id) AS userawards ON tabitcapstone.users.user_id = userawards.user_id WHERE users.active_flag = 1 AND users.user_id != ?";
@@ -62,12 +62,15 @@ module.exports = function(){
     
     
     /********************************************************************************************************
-    Add Profile Page
+    Add User Page
     ********************************************************************************************************/
+   router.get('/adduser', isLoggedIn, function(req, res){
+       res.render('addUser');
+   });
     //add user
     router.post('/adduser', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ?, users.created_by = ?, users.create_date = ?, users.modified_by = ?, modified_date = ? WHERE users.user_id = ?";
+        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.email=?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1";
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var pass = 0
         if (req.fields.password == "") {
@@ -76,7 +79,7 @@ module.exports = function(){
         else {
             pass = req.fields.password;
         }
-        var inserts = [req.fields.first_name, req.fields.last_name, pass, req.session.context.user_id, d, req.session.context.user_id, d, req.session.context.user_id];
+        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.email, pass, req.session.context.user_id, d, req.session.context.user_id, d];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
