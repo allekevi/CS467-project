@@ -203,7 +203,35 @@ module.exports = function(){
     router.get('/analyticstrend', isLoggedIn, function (req, res) {
         //Placeholder function
         function dummy(res, mysql, context, id, complete) {
-            complete();
+            var sql = "SELECT time.year FROM tabitcapstone.time WHERE time.year <= YEAR(NOW()) GROUP BY time.year ORDER BY time.year DESC";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.years = results;
+                complete();
+            });
+
+            sql = "SELECT awards.award_id, awards.award_name FROM tabitcapstone.awards WHERE awards.active_flag = 1 ORDER BY awards.award_id ASC";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.types = results;
+                complete();
+            });
+
+            sql = "SELECT users.user_id, CONCAT(users.first_name, ' ', users.last_name) AS name FROM tabitcapstone.users WHERE users.active_flag = 1 ORDER BY users.user_id ASC";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.users = results;
+                complete();
+            });
         }
 
         //populate page
@@ -213,18 +241,19 @@ module.exports = function(){
         dummy(res, mysql, context, req.params.id, complete);
         function complete() {
             callbackCount++;
-            if (callbackCount >= 1) {
+            if (callbackCount >= 3) {
                 context.layout = 'admin';
                 res.render('analyticstrend', context);
             }
         }
     });
 
-    router.get('/trenddata', isLoggedIn, function (req, res) {
+    router.get('/trenddata/:id/:type/:recipient/:grantor', isLoggedIn, function (req, res) {
         //Placeholder function
-        function dummy(res, mysql, context, id, complete) {
-            var sql = "SELECT CONCAT(time.month_name, ', ', time.year) AS calendar_month, ifnull(A.awardnum, 0) AS awardNum FROM tabitcapstone.time LEFT JOIN (SELECT CONCAT(YEAR(user_awards.created_date), '-', MONTH(user_awards.created_date)) AS mydate, count(user_awards.user_award_id) AS awardnum FROM tabitcapstone.user_awards WHERE user_awards.active_flag = 1) AS A ON CONCAT(YEAR(time.date), '-', MONTH(time.date)) = A.mydate WHERE time.date >= DATE_ADD(NOW(), INTERVAL - 12 MONTH) AND time.date <= NOW() ORDER BY time.date_id";
-            mysql.pool.query(sql, function (error, results, fields) {
+        function dummy(res, mysql, context, id, type, recipient, grantor, complete) {
+            var sql = "SELECT CONCAT(time.month_name, ', ', time.year) AS calendar_month, ifnull(A.awardnum, 0) AS awardNum FROM tabitcapstone.time LEFT JOIN (SELECT CONCAT(YEAR(user_awards.created_date), '-', MONTH(user_awards.created_date)) AS mydate, count(user_awards.user_award_id) AS awardnum FROM tabitcapstone.user_awards WHERE user_awards.active_flag = 1 AND user_awards.award_id LIKE ? AND user_awards.user_id LIKE ? AND user_awards.created_by LIKE ?) AS A ON CONCAT(YEAR(time.date), '-', MONTH(time.date)) = A.mydate WHERE time.year = ? ORDER BY time.date_id";
+            var inserts = [type, recipient, grantor, id];
+            mysql.pool.query(sql, inserts, function (error, results, fields) {
                 if (error) {
                     res.write(JSON.stringify(error));
                     res.end();
@@ -238,7 +267,7 @@ module.exports = function(){
         var callbackCount = 0;
         var context = {};
         var mysql = req.app.get('mysql');
-        dummy(res, mysql, context, req.params.id, complete);
+        dummy(res, mysql, context, req.params.id, req.params.type, req.params.recipient, req.params.grantor, complete);
         function complete() {
             callbackCount++;
             if (callbackCount >= 1) {
@@ -254,7 +283,25 @@ module.exports = function(){
     router.get('/analyticsmost', isLoggedIn, function (req, res) {
         //Placeholder function
         function dummy(res, mysql, context, id, complete) {
-            complete();
+            var sql = "SELECT time.year FROM tabitcapstone.time WHERE time.year <= YEAR(NOW()) GROUP BY time.year ORDER BY time.year DESC";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.years = results;
+                complete();
+            });
+
+            sql = "SELECT users.user_id, CONCAT(users.first_name, ' ', users.last_name) AS name FROM tabitcapstone.users WHERE users.active_flag = 1 ORDER BY users.user_id ASC";
+            mysql.pool.query(sql, function (error, results, fields) {
+                if (error) {
+                    res.write(JSON.stringify(error));
+                    res.end();
+                }
+                context.users = results;
+                complete();
+            });
         }
 
         //populate page
@@ -264,18 +311,19 @@ module.exports = function(){
         dummy(res, mysql, context, req.params.id, complete);
         function complete() {
             callbackCount++;
-            if (callbackCount >= 1) {
+            if (callbackCount >= 2) {
                 context.layout = 'admin';
                 res.render('analyticsmost', context);
             }
         }
     });
 
-    router.get('/mostdata', isLoggedIn, function (req, res) {
+    router.get('/mostdata/:id/:recipient/:grantor', isLoggedIn, function (req, res) {
         //Placeholder function
-        function dummy(res, mysql, context, id, complete) {
-            var sql = "SELECT awards.award_name, COUNT(user_awards.user_award_id) AS award_count FROM tabitcapstone.user_awards LEFT JOIN tabitcapstone.awards ON user_awards.award_id = awards.award_id WHERE user_awards.active_flag = 1 GROUP BY awards.award_name ORDER BY award_count DESC";
-            mysql.pool.query(sql, function (error, results, fields) {
+        function dummy(res, mysql, context, id, recipient, grantor, complete) {
+            var sql = "SELECT awards.award_name, COUNT(user_awards.user_award_id) AS award_count FROM tabitcapstone.user_awards LEFT JOIN tabitcapstone.awards ON user_awards.award_id = awards.award_id WHERE user_awards.active_flag = 1 AND YEAR(user_awards.award_date) = ? AND user_awards.user_id LIKE ? AND user_awards.created_by LIKE ? GROUP BY awards.award_name ORDER BY award_count DESC";
+            var inserts = [id, recipient, grantor];
+            mysql.pool.query(sql, inserts, function (error, results, fields) {
                 if (error) {
                     res.write(JSON.stringify(error));
                     res.end();
@@ -289,7 +337,7 @@ module.exports = function(){
         var callbackCount = 0;
         var context = {};
         var mysql = req.app.get('mysql');
-        dummy(res, mysql, context, req.params.id, complete);
+        dummy(res, mysql, context, req.params.id, req.params.recipient, req.params.grantor, complete);
         function complete() {
             callbackCount++;
             if (callbackCount >= 1) {

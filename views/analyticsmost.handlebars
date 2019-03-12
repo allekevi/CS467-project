@@ -12,50 +12,147 @@
     <ul class="submenu">
         <li class="subitem"><div class="subinactive"><a href="/manageusers/analyticstrend">Award Trend</a></div></li>
         <li class="subitem"><a class="active">Most Awarded</a></li>
-        <li class="subitem"><div class="subinactive"><a href="/manageusers/analyticsfeedback">Feedback Analysis</a></div></li>
     </ul>
 </div>
-<div class="arrow-down" style="margin-left:80px; border-top: 20px solid #7F7F7F;"></div>
+<div class="arrow-down" style="margin-left:310px; border-top: 20px solid #7F7F7F;"></div>
 <div class="menu" id="usermenu">
-    <div class="menutitle">[ANALYTICS TITLE]</div>
+    <div class="menutitle">Type of Awards Granted</div>
     <hr>
-    <div>
     <div style="padding-left: 15px; padding-right: 15px;">
         <canvas id="myChart"></canvas>
-        <script>
-            var myx = new XMLHttpRequest();
-            var types = [];
-            var awards = [];
-            myx.open("GET", "/manageusers/mostdata", true);
-            myx.onload = function () {
-                if (myx.readyState === myx.DONE) {
-                    if (myx.status === 200) {
-                        var myData = myx.response;
-
-                        for (var i = 0; i < myData.length; i++) {
-                            types.push(myData[i]['award_name']);
-                            awards.push(myData[i]['award_count']);
-                        }
-
-                        let myChart = document.getElementById('myChart').getContext('2d');
-                        let massPopChart = new Chart(myChart, {
-                            type: 'bar',
-                            data: {
-                                labels: types,
-                                datasets: [{
-                                    label: 'Awards Given',
-                                    data: awards
-                                }]
-                            },
-                            options: {}
-                        });
-                    }
-                }
-            };
-            myx.responseType = 'json';
-            myx.send();
-
-            console.log("Hi Mom");
-        </script>
+    </div>
+    <select id="myYear" class="filter">
+        {{#each years}}
+        <option value="{{year}}">{{year}}</option>
+        {{/each}}
+    </select>
+    <select id="myRecipient" class="bigfilter">
+        <option value="%25">All</option>
+        {{#each users}}
+        <option value="{{user_id}}">{{name}}</option>
+        {{/each}}
+    </select>
+    <select id="myGrantor" class="bigfilter">
+        <option value="%25">All</option>
+        {{#each users}}
+        <option value="{{user_id}}">{{name}}</option>
+        {{/each}}
+    </select>
+    <button id="excel" class="export" type="button">Export to Excel</button>
+    <br />
+    <div class="filterTitle">
+        <div class="inline">Year Awarded</div>
+        <div class="inline" style="margin-left:50px;">Recipient</div>
+        <div class="inline" style="margin-left:260px;">Grantor</div>
     </div>
 </div>
+
+<script>
+    var massPopChart;
+    var types = [];
+    var awards = [];
+
+    function dataLoad() {
+        var myx = new XMLHttpRequest();
+        types = [];
+        awards = [];
+        var fYear = document.getElementById("myYear").value;
+        var fRecipient = document.getElementById("myRecipient").value;
+        var fGrantor = document.getElementById("myGrantor").value;
+        myx.open("GET", "/manageusers/mostdata/" + fYear + "/" + fRecipient + "/" + fGrantor, true);
+        myx.onload = function () {
+            if (myx.readyState === myx.DONE) {
+                if (myx.status === 200) {
+                    var myData = myx.response;
+
+                    for (var i = 0; i < myData.length; i++) {
+                        types.push(myData[i]['award_name']);
+                        awards.push(myData[i]['award_count']);
+                    }
+
+                    if (massPopChart) {
+                        massPopChart.destroy();
+                    }
+
+                    let myChart = document.getElementById('myChart').getContext('2d');
+                    massPopChart = new Chart(myChart, {
+                        type: 'bar',
+                        data: {
+                            labels: types,
+                            datasets: [{
+                                label: 'Awards Given',
+                                data: awards,
+                                backgroundColor: 'rgba(20, 97, 95, 0.1)',
+                                borderColor: 'rgba(20, 97, 95, 0.1)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    display: true,
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                }
+            }
+        };
+        myx.responseType = 'json';
+        myx.send();
+    }
+
+    $("#myYear").change(function () {
+        dataLoad();
+    });
+
+    $("#myRecipient").change(function () {
+        dataLoad();
+    });
+
+    $("#myGrantor").change(function () {
+        dataLoad();
+    });
+
+    //Code leveraged from https://www.youtube.com/watch?v=41rOAt-zCu4
+    $("#excel").click(function () {
+        var myWB = XLSX.utils.book_new();
+        myWB.Props = {
+            Title: "Kudos Data Export",
+            Subject: "Kudos Data Export",
+            Author: "Kudos Website",
+            CreatedDate: new Date(2017, 12, 19)
+        };
+        myWB.SheetNames.push("Data Export");
+        var myData = [['Award Type', 'Awards']];
+        for (var j = 0; j < types.length; j++) {
+            myData[j + 1] = [];
+            myData[j + 1][0] = types[j];
+            myData[j + 1][1] = awards[j];
+        }
+        myData[types.length + 1] = ["", ""];
+        myData[types.length + 2] = ["Filter Selection", ""];
+        myData[types.length + 3] = ["Year: ", document.getElementById("myYear").value];
+        myData[types.length + 4] = ["Recipient: ", $("#myRecipient option:selected").text()];
+        myData[types.length + 5] = ["Grantor: ", $("#myGrantor option:selected").text()];
+
+        var myWS = XLSX.utils.aoa_to_sheet(myData);
+        myWB.Sheets["Data Export"] = myWS;
+
+        var exp = XLSX.write(myWB, { bookType: 'xlsx', type: 'binary' });
+
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        saveAs(new Blob([s2ab(exp)], { type: "application/octet-stream" }), "Kudos Most Awarded Export.xlsx");
+    });
+
+    dataLoad();
+
+</script>

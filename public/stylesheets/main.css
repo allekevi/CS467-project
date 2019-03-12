@@ -96,6 +96,20 @@ table {
 	vertical-align: middle;
 }
 
+.bigfilter {
+	height: 50px;
+	width: 300px;
+	border: 1px solid #BDBDBD;
+	border-radius: 10px;
+	margin-left: 40px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 24px;
+	padding-left: 10px;
+}
+
 .buttoncell {
 	text-align: center;
 	vertical-align: middle;
@@ -172,19 +186,36 @@ table {
 
 .filter {
 	height: 50px;
-	width: 425px;
+	width: 125px;
 	border: 1px solid #BDBDBD;
 	border-radius: 10px;
 	margin-left: 40px;
 	margin-top: 10px;
+	margin-bottom: 10px;
 	font-family: "Segoe UI", Arial;
 	font-style: normal;
 	font-size: 24px;
 	padding-left: 10px;
 }
 
+.filterTitle {
+	margin-left: 40px;
+	margin-bottom: 40px;
+	font-family: "Segoe UI", Arial;
+	font-style: normal;
+	font-size: 18px;
+	padding-left: 0px;
+	padding-bottom: 40px;
+	font-weight: bold;
+}
+
+
 .inactive a:hover {
 	background-color: #005696;
+}
+
+.inline {
+	display:inline;
 }
 
 .input {
