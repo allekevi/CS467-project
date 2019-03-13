@@ -70,7 +70,7 @@ module.exports = function(){
     //add user
     router.post('/adduser', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.email=?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1";
+        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.email=?, users.admin_flag = ?, users.users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1";
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var pass = 0
         if (req.fields.password == "") {
@@ -79,7 +79,7 @@ module.exports = function(){
         else {
             pass = req.fields.password;
         }
-        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.email, pass, req.session.context.user_id, d, req.session.context.user_id, d];
+        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.email, req.fields.admin_flag, pass, req.session.context.user_id, d, req.session.context.user_id, d];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
                 res.write(JSON.stringify(error));
