@@ -24,7 +24,7 @@ module.exports = function(){
     }
     //get a list of users capable of getting awards
     function getUsers(res, mysql, context, complete){
-        mysql.pool.query("SELECT user_id, first_name, last_name FROM users WHERE admin_flag=0", function(error, results, fields){
+        mysql.pool.query("SELECT user_id, first_name, last_name FROM users WHERE admin_flag=0 AND active_flag=1", function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
                 res.end();
