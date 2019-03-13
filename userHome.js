@@ -93,7 +93,7 @@ module.exports = function(){
     }
     //get awards to populate my awards page
     function getMyAwards(res, mysql, context, id, complete){    // V fix below V need to get awardee name
-        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name, ua.user_award_id FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.created_by= u.user_id WHERE ua.user_id=? AND us.active_flag=1";
+        var sql = "SELECT a.award_name, DATE_FORMAT(ua.award_date, '%Y-%m-%d') as award_date, u.first_name, u.last_name, ua.user_award_id FROM user_awards ua INNER JOIN awards a ON a.award_id = ua.award_id INNER JOIN users u ON ua.created_by= u.user_id WHERE ua.user_id=? AND ua.active_flag=1";
         mysql.pool.query(sql, id, function(error, results, fields){
             if(error){
                 res.write(JSON.stringify(error));
@@ -242,7 +242,7 @@ module.exports = function(){
         var mysql = req.app.get('mysql');
         var id = req.session.context.user_id;
         req.fields.createDate = new Date();
-        var sql = 'INSERT INTO user_awards (user_id, award_id, award_date, created_by, created_date, active_flag=1) VALUES(?,?,?,?,?)';
+        var sql = 'INSERT INTO user_awards (user_id, award_id, award_date, created_by, created_date, active_flag) VALUES(?,?,?,?,?, 1)';
         var data = [req.fields.name, req.fields.aType, req.fields.date, id,req.fields.createDate];
         
         mysql.pool.query(sql, data, function(error, results, fields){
