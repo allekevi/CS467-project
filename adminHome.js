@@ -79,6 +79,7 @@ module.exports = function(){
         else {
             pass = req.fields.password;
         }
+        
         var inserts = [req.fields.first_name, req.fields.last_name, req.fields.email, req.fields.admin_flag, pass, req.session.context.user_id, d, req.session.context.user_id, d];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
             if (error) {
