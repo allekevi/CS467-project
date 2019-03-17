@@ -208,7 +208,7 @@ module.exports = function(){
     //edit user
     router.post('/edituser/:id', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.admin_flag, users.modified_by = ?, users.modified_date = ? WHERE users.user_id = ?";
+        var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.admin_flag = ?, users.modified_by = ?, users.modified_date = ? WHERE users.user_id = ?";
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var inserts = [req.fields.first_name, req.fields.last_name, req.fields.admin_flag, req.session.context.user_id, d, req.fields.id];
         sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
