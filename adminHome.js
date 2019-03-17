@@ -70,8 +70,8 @@ module.exports = function(){
     //add user
     router.post('/adduser', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
-        var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.email=?, users.admin_flag = ?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1";
-        if (req.fields.admin_flag != '1'){
+        var sql2 = "SELECT COUNT(*) AS myCount FROM tabitcapstone.users WHERE users.email = ?";
+        if (req.fields.admin_flag != '1') {
             req.fields.admin_flag = 0;   
         }
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -82,14 +82,32 @@ module.exports = function(){
         else {
             pass = req.fields.password;
         }
- 
-        var inserts = [req.fields.first_name, req.fields.last_name, req.fields.email, req.fields.admin_flag, pass, req.session.context.user_id, d, req.session.context.user_id, d];
-        sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
-            if (error) {
-                res.write(JSON.stringify(error));
-                res.end()
-            } else {
-                res.redirect('/manageusers');
+        var inserts2 = [req.fields.email];
+
+        sql = mysql.pool.query(sql2, inserts2, function (error, results2, fields) {
+            if (results2[0].myCount > 0) {
+                var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.admin_flag = ?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1 WHERE users.email = ?";
+                var inserts = [req.fields.first_name, req.fields.last_name, req.fields.admin_flag, pass, req.session.context.user_id, d, req.session.context.user_id, d, req.fields.email];
+                sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
+                    if (error) {
+                        res.write(JSON.stringify(error));
+                        res.end();
+                    } else {
+                        res.redirect('/manageusers');
+                    }
+                });
+            }
+            else {
+                var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.email=?, users.admin_flag = ?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1";
+                var inserts = [req.fields.first_name, req.fields.last_name, req.fields.email, req.fields.admin_flag, pass, req.session.context.user_id, d, req.session.context.user_id, d];
+                sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
+                    if (error) {
+                        res.write(JSON.stringify(error));
+                        res.end();
+                    } else {
+                        res.redirect('/manageusers');
+                    }
+                });
             }
         });
     });
