@@ -71,7 +71,7 @@ module.exports = function(){
     router.post('/adduser', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
         var sql = "INSERT tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.email=?, users.admin_flag = ?, users.password = ?, users.created_by = ?, create_date = ?, users.modified_by = ?, modified_date = ?, active_flag=1";
-        if (req.fields.admin_flag == NULL){
+        if (req.fields.admin_flag != '1'){
             req.fields.admin_flag = 0;   
         }
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -132,7 +132,7 @@ module.exports = function(){
     router.post('/editprofile', isLoggedIn, function (req, res) {
         var mysql = req.app.get('mysql');
         var sql = "UPDATE tabitcapstone.users SET users.first_name = ?, users.last_name = ?, users.password = ?, users.modified_by = ?, modified_date = ? WHERE users.user_id = ?";
-        if (req.fields.admin_flag == NULL){
+        if (req.fields.admin_flag != '1'){
             req.fields.admin_flag = 0;   
         }
         var d = new Date().toISOString().slice(0, 19).replace('T', ' ');
