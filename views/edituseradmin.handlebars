@@ -25,6 +25,8 @@
         <br>
         <input id="myEmail" class="input" type="text" name="email" placeholder="Email Address" value="{{user.email}}" readonly>
         <br>
+        <label class='menutitle' >Site Administrator</label> <input class="input" type="checkbox" name="admin_flag" value='1'>
+        <hr>
         <input type="hidden" name="id" value="{{user.user_id}}">
         <input type="submit" value="Save Changes" style="cursor:pointer;">
         <a href="/manageusers"><button class="cancel" type="button">Cancel</button></a>
